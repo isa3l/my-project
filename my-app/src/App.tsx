@@ -8,20 +8,20 @@ export default function HouseDashboard() {
   const [sqft, setSqft] = useState(2000);
   const [menuOpen, setMenuOpen] = useState(false);
   const [crupPopupOpen, setCrupPopupOpen] = useState(false);
-  const mountRef = useRef(null);
-  const sceneRef = useRef(null);
-  const rendererRef = useRef(null);
-  const houseRef = useRef(null);
-  const cameraRef = useRef(null);
+  const mountRef = useRef<HTMLDivElement | null>(null);
+  const sceneRef = useRef<any>(null);
+  const rendererRef = useRef<any>(null);
+  const houseRef = useRef<any>(null);
+  const cameraRef = useRef<any>(null);
   const modelSectionRef = useRef<HTMLDivElement>(null);
   const aboutSectionRef = useRef<HTMLDivElement>(null);
   
   // Second scene for realistic house
-  const realisticMountRef = useRef(null);
-  const realisticSceneRef = useRef(null);
-  const realisticRendererRef = useRef(null);
-  const realisticHouseRef = useRef(null);
-  const realisticCameraRef = useRef(null);
+  const realisticMountRef = useRef<HTMLDivElement | null>(null);
+  const realisticSceneRef = useRef<any>(null);
+  const realisticRendererRef = useRef<any>(null);
+  const realisticHouseRef = useRef<any>(null);
+  const realisticCameraRef = useRef<any>(null);
 
   // Smooth scroll to model section
   const handleRunModel = () => {
@@ -39,6 +39,7 @@ export default function HouseDashboard() {
 
   useEffect(() => {
     if (typeof window === 'undefined' || !mountRef.current) return;
+    const mountEl = mountRef.current;
 
     // Import Three.js from CDN
     const script = document.createElement('script');
@@ -56,7 +57,7 @@ export default function HouseDashboard() {
       // Camera
       const camera = new THREE.PerspectiveCamera(
         45,
-        mountRef.current.clientWidth / mountRef.current.clientHeight,
+        mountEl.clientWidth / mountEl.clientHeight,
         0.1,
         1000
       );
@@ -66,11 +67,10 @@ export default function HouseDashboard() {
       
       // Renderer
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+      renderer.setSize(mountEl.clientWidth, mountEl.clientHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      if (!mountRef.current) return; // safe check
-      mountRef.current.appendChild(renderer.domElement);
+      mountEl.appendChild(renderer.domElement);
       rendererRef.current = renderer;
       
       // Lighting
@@ -152,32 +152,6 @@ export default function HouseDashboard() {
       knob.position.set(0.3, -0.75, 2.1);
       house.add(knob);
       
-      // Create windows function
-      const createWindow = (x: number, y: number, z: number) => {
-        const windowGroup = new THREE.Group();
-        
-        const frameGeometry = new THREE.BoxGeometry(0.7, 0.7, 0.1);
-        const frameMaterial = new THREE.MeshStandardMaterial({ 
-          color: 0xb91c1c,
-          roughness: 0.6
-        });
-        const frame = new THREE.Mesh(frameGeometry, frameMaterial);
-        windowGroup.add(frame);
-        
-        const glassGeometry = new THREE.BoxGeometry(0.6, 0.6, 0.05);
-        const glassMaterial = new THREE.MeshStandardMaterial({ 
-          color: 0x87ceeb,
-          transparent: true,
-          opacity: 0.7,
-          roughness: 0.1
-        });
-        const glass = new THREE.Mesh(glassGeometry, glassMaterial);
-        glass.position.z = 0.03;
-        windowGroup.add(glass);
-        
-        windowGroup.position.set(x, y, z);
-        return windowGroup;
-      };
       
       // Store windows for dynamic updates
       house.userData.windows = [];
@@ -244,7 +218,8 @@ export default function HouseDashboard() {
   const updateHouse = () => {
     if (!houseRef.current) return;
     
-    const house = houseRef.current;
+    const house = houseRef.current as any;
+    house.userData = house.userData || { windows: [], orbs: [] };
     
     // Update scale based on bedrooms and sqft
     const scale = 0.6 + (bedrooms / 40) + (sqft / 15000);
@@ -269,6 +244,7 @@ export default function HouseDashboard() {
     for (let i = 0; i < numWindows; i++) {
       if (typeof window !== 'undefined' && (window as any).THREE) {
         const windowGroup = createWindow(...windowPositions[i]);
+        if (!windowGroup) continue;
         house.add(windowGroup);
         house.userData.windows.push(windowGroup);
       }
@@ -383,6 +359,7 @@ export default function HouseDashboard() {
       
       // Create Realistic House Group
       const house = new THREE.Group();
+      house.userData = house.userData || { windows: [] };
       realisticHouseRef.current = house;
       scene.add(house);
       
@@ -562,7 +539,7 @@ export default function HouseDashboard() {
       house.userData.windows = [];
       
       // Add windows
-      const windowPositions = [
+      const windowPositions: [number, number, number][] = [
         [-1.5, 0.8, 2.28],
         [1.5, 0.8, 2.28],
         [-1.5, -0.5, 2.28],
@@ -573,8 +550,10 @@ export default function HouseDashboard() {
         [-2.28, 0.8, 1.5],
       ];
       
-      windowPositions.forEach(pos => {
-        const window = createRealisticWindow(...pos);
+      windowPositions.forEach((pos) => {
+        const [wx, wy, wz] = pos;
+        const window = createRealisticWindow(wx, wy, wz);
+        if (!window) return;
         house.add(window);
         house.userData.windows.push(window);
       });
