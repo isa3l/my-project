@@ -2,15 +2,18 @@ import './App.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { Home, Bed, Bath } from 'lucide-react';
 
+// Type for THREE.js
+type THREEType = any;
+
 export default function HouseDashboard() {
   const [bedrooms, setBedrooms] = useState(3);
   const [bathrooms, setBathrooms] = useState(2);
   const [sqft, setSqft] = useState(2000);
-  const mountRef = useRef(null);
-  const sceneRef = useRef(null);
-  const rendererRef = useRef(null);
-  const houseRef = useRef(null);
-  const cameraRef = useRef(null);
+  const mountRef = useRef<HTMLDivElement>(null);
+  const sceneRef = useRef<any>(null);
+  const rendererRef = useRef<any>(null);
+  const houseRef = useRef<any>(null);
+  const cameraRef = useRef<any>(null);
 
   useEffect(() => {
     if (typeof window === 'undefined' || !mountRef.current) return;
@@ -21,7 +24,7 @@ export default function HouseDashboard() {
     script.async = true;
     
     script.onload = () => {
-      const THREE = window.THREE;
+      const THREE = (window as any).THREE;
       
       // Scene setup
       const scene = new THREE.Scene();
@@ -41,12 +44,12 @@ export default function HouseDashboard() {
       
       // Renderer
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      const containerWidth = mountRef.current.clientWidth;
-      const containerHeight = mountRef.current.clientHeight;
+      const containerWidth = mountRef.current!.clientWidth;
+      const containerHeight = mountRef.current!.clientHeight;
       renderer.setSize(containerWidth, containerHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-      mountRef.current.appendChild(renderer.domElement);
+      mountRef.current!.appendChild(renderer.domElement);
       rendererRef.current = renderer;
       
       // Update camera aspect ratio
@@ -133,7 +136,7 @@ export default function HouseDashboard() {
       house.add(knob);
       
       // Create windows function
-      const createWindow = (x, y, z) => {
+      const createWindow = (x: number, y: number, z: number) => {
         const windowGroup = new THREE.Group();
         
         const frameGeometry = new THREE.BoxGeometry(0.7, 0.7, 0.1);
@@ -189,7 +192,7 @@ export default function HouseDashboard() {
         frame++;
         
         // Animate orbs
-        house.userData.orbs.forEach((orb, i) => {
+        house.userData.orbs.forEach((orb: any, i: number) => {
           if (orb.visible) {
             const angle = (i / bathrooms) * Math.PI * 2 + frame * 0.02;
             const radius = 4;
@@ -228,10 +231,10 @@ export default function HouseDashboard() {
     house.scale.set(scale, scale, scale);
     
     // Update windows
-    house.userData.windows.forEach(w => house.remove(w));
+    house.userData.windows.forEach((w: any) => house.remove(w));
     house.userData.windows = [];
     
-    const windowPositions = [
+    const windowPositions: [number, number, number][] = [
       [-1.2, 0.5, 2.05],
       [1.2, 0.5, 2.05],
       [-1.2, -0.5, 2.05],
@@ -244,7 +247,7 @@ export default function HouseDashboard() {
     
     const numWindows = Math.min(bedrooms, 8);
     for (let i = 0; i < numWindows; i++) {
-      if (typeof window !== 'undefined' && window.THREE) {
+      if (typeof window !== 'undefined' && (window as any).THREE) {
         const windowGroup = createWindow(...windowPositions[i]);
         house.add(windowGroup);
         house.userData.windows.push(windowGroup);
@@ -252,15 +255,15 @@ export default function HouseDashboard() {
     }
     
     // Update bathroom orbs visibility
-    house.userData.orbs.forEach((orb, i) => {
+    house.userData.orbs.forEach((orb: any, i: number) => {
       orb.visible = i < bathrooms;
     });
   };
   
-  const createWindow = (x, y, z) => {
-    if (typeof window === 'undefined' || !window.THREE) return null;
+  const createWindow = (x: number, y: number, z: number) => {
+    if (typeof window === 'undefined' || !(window as any).THREE) return null;
     
-    const THREE = window.THREE;
+    const THREE = (window as any).THREE;
     const windowGroup = new THREE.Group();
     
     const frameGeometry = new THREE.BoxGeometry(0.7, 0.7, 0.1);
@@ -289,7 +292,7 @@ export default function HouseDashboard() {
   // Initial render when scene is ready
   useEffect(() => {
     const checkAndRender = setInterval(() => {
-      if (houseRef.current && typeof window !== 'undefined' && window.THREE) {
+      if (houseRef.current && typeof window !== 'undefined' && (window as any).THREE) {
         updateHouse();
         clearInterval(checkAndRender);
       }
@@ -300,7 +303,7 @@ export default function HouseDashboard() {
   
   // Update when sliders change
   useEffect(() => {
-    if (houseRef.current && typeof window !== 'undefined' && window.THREE) {
+    if (houseRef.current && typeof window !== 'undefined' && (window as any).THREE) {
       updateHouse();
     }
   }, [bedrooms, bathrooms, sqft]);
