@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Home, Bed, Bath } from 'lucide-react';
 
@@ -30,21 +31,27 @@ export default function HouseDashboard() {
       // Camera
       const camera = new THREE.PerspectiveCamera(
         45,
-        mountRef.current.clientWidth / mountRef.current.clientHeight,
+        1, // Square aspect ratio
         0.1,
         1000
       );
-      camera.position.set(8, 6, 12);
+      camera.position.set(6, 5, 10);
       camera.lookAt(0, 0, 0);
       cameraRef.current = camera;
       
       // Renderer
       const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-      renderer.setSize(mountRef.current.clientWidth, mountRef.current.clientHeight);
+      const containerWidth = mountRef.current.clientWidth;
+      const containerHeight = mountRef.current.clientHeight;
+      renderer.setSize(containerWidth, containerHeight);
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
       mountRef.current.appendChild(renderer.domElement);
       rendererRef.current = renderer;
+      
+      // Update camera aspect ratio
+      camera.aspect = containerWidth / containerHeight;
+      camera.updateProjectionMatrix();
       
       // Lighting
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
@@ -297,9 +304,9 @@ export default function HouseDashboard() {
           <div className="h-px bg-gradient-to-r from-blue-500 via-purple-500 to-transparent mx-auto w-3/4"></div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left Panel - Controls */}
-          <div className="space-y-8">
+          <div className="space-y-8 lg:pt-20">
             <div className="bg-zinc-900 rounded-lg p-8 border border-zinc-800">
               <h2 className="text-3xl font-black mb-8 tracking-wide glow-text">BUILD YOUR HOME</h2>
               
@@ -380,11 +387,11 @@ export default function HouseDashboard() {
           </div>
 
           {/* Right Panel - 3D House Visualization */}
-          <div className="flex items-center justify-center">
-            <div className="relative bg-gradient-to-br from-zinc-900 to-black rounded-lg p-8 border border-zinc-800">
+          <div className="flex items-center justify-center lg:pt-20">
+            <div className="relative bg-gradient-to-br from-zinc-900 to-black rounded-lg p-8 border border-zinc-800 w-full max-w-[600px]">
               <div 
                 ref={mountRef} 
-                style={{ width: '600px', height: '600px' }}
+                style={{ width: '100%', height: '600px' }}
                 className="rounded-lg overflow-hidden"
               />
               
