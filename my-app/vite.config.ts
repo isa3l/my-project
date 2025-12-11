@@ -10,9 +10,4 @@ export default defineConfig({
       },
     }),
   ],
-  base: process.env.NODE_ENV === 'production' ? '/crup/' : '/',
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-  }
 })
