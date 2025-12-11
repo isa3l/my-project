@@ -202,9 +202,6 @@ export default function HouseDashboard() {
         renderer.render(scene, camera);
       };
       animate();
-      
-      // Initial window setup
-      updateHouse();
     };
     
     document.body.appendChild(script);
@@ -289,13 +286,28 @@ export default function HouseDashboard() {
     return windowGroup;
   };
   
+  // Initial render when scene is ready
   useEffect(() => {
-    updateHouse();
+    const checkAndRender = setInterval(() => {
+      if (houseRef.current && typeof window !== 'undefined' && window.THREE) {
+        updateHouse();
+        clearInterval(checkAndRender);
+      }
+    }, 100);
+
+    return () => clearInterval(checkAndRender);
+  }, []);
+  
+  // Update when sliders change
+  useEffect(() => {
+    if (houseRef.current && typeof window !== 'undefined' && window.THREE) {
+      updateHouse();
+    }
   }, [bedrooms, bathrooms, sqft]);
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-8">
-      <div className="max-w-7xl mx-auto w-full">
+    <div className="min-h-screen bg-black text-white p-8">
+      <div className="w-full max-w-7xl mx-auto">
         {/* Header */}
         <div className="mb-12 text-center">
           <h1 className="text-6xl font-black tracking-wider mb-2 title-3d rounded-title">
@@ -304,7 +316,7 @@ export default function HouseDashboard() {
           <div className="h-px bg-gradient-to-r from-blue-500 via-purple-500 to-transparent mx-auto w-3/4"></div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* Left Panel - Controls */}
           <div className="space-y-8">
             <div className="bg-zinc-900 rounded-lg p-8 border border-zinc-800">
@@ -407,75 +419,6 @@ export default function HouseDashboard() {
           </div>
         </div>
       </div>
-
-      <style jsx>{`
-        .rounded-title {
-          font-family: 'Arial Rounded MT Bold', 'Helvetica Rounded', sans-serif;
-          letter-spacing: 0.05em;
-        }
-
-        .title-3d {
-          text-shadow: 
-            0 1px 0 #0d3d0d,
-            0 2px 0 #0d3d0d,
-            0 3px 0 #0d3d0d,
-            0 4px 0 #0d3d0d,
-            0 5px 0 #0d3d0d,
-            0 6px 0 #0d3d0d,
-            0 7px 0 #0d3d0d,
-            0 8px 0 #0d3d0d,
-            0 9px 0 #0d3d0d,
-            0 10px 15px rgba(13, 61, 13, 0.7),
-            0 15px 25px rgba(13, 61, 13, 0.5),
-            0 20px 35px rgba(13, 61, 13, 0.4);
-          transform: translateZ(0);
-          color: #ffffff;
-        }
-
-        .glow-text {
-          background: linear-gradient(135deg, #3b82f6, #8b5cf6, #06b6d4);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8))
-                  drop-shadow(0 0 40px rgba(139, 92, 246, 0.6))
-                  drop-shadow(0 0 60px rgba(6, 182, 212, 0.4));
-          animation: glow-pulse 3s ease-in-out infinite;
-        }
-
-        @keyframes glow-pulse {
-          0%, 100% {
-            filter: drop-shadow(0 0 20px rgba(59, 130, 246, 0.8))
-                    drop-shadow(0 0 40px rgba(139, 92, 246, 0.6))
-                    drop-shadow(0 0 60px rgba(6, 182, 212, 0.4));
-          }
-          50% {
-            filter: drop-shadow(0 0 30px rgba(59, 130, 246, 1))
-                    drop-shadow(0 0 60px rgba(139, 92, 246, 0.8))
-                    drop-shadow(0 0 90px rgba(6, 182, 212, 0.6));
-          }
-        }
-
-        .slider::-webkit-slider-thumb {
-          appearance: none;
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background: white;
-          cursor: pointer;
-          box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }
-
-        .slider::-moz-range-thumb {
-          width: 20px;
-          height: 20px;
-          border-radius: 50%;
-          background: white;
-          cursor: pointer;
-          border: none;
-          box-shadow: 0 0 10px rgba(59, 130, 246, 0.5);
-        }
-      `}</style>
     </div>
   );
 }
