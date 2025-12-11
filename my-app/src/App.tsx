@@ -1,4 +1,4 @@
-
+import './App.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { Home, Bed, Bath } from 'lucide-react';
 
@@ -294,8 +294,8 @@ export default function HouseDashboard() {
   }, [bedrooms, bathrooms, sqft]);
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="min-h-screen bg-black text-white flex items-center justify-center p-8">
+      <div className="max-w-7xl mx-auto w-full">
         {/* Header */}
         <div className="mb-12 text-center">
           <h1 className="text-6xl font-black tracking-wider mb-2 title-3d rounded-title">
@@ -304,9 +304,9 @@ export default function HouseDashboard() {
           <div className="h-px bg-gradient-to-r from-blue-500 via-purple-500 to-transparent mx-auto w-3/4"></div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
           {/* Left Panel - Controls */}
-          <div className="space-y-8 lg:pt-20">
+          <div className="space-y-8">
             <div className="bg-zinc-900 rounded-lg p-8 border border-zinc-800">
               <h2 className="text-3xl font-black mb-8 tracking-wide glow-text">BUILD YOUR HOME</h2>
               
@@ -387,7 +387,7 @@ export default function HouseDashboard() {
           </div>
 
           {/* Right Panel - 3D House Visualization */}
-          <div className="flex items-center justify-center lg:pt-20">
+          <div className="flex items-center justify-center">
             <div className="relative bg-gradient-to-br from-zinc-900 to-black rounded-lg p-8 border border-zinc-800 w-full max-w-[600px]">
               <div 
                 ref={mountRef} 
