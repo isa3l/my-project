@@ -2,6 +2,12 @@ import './App.css';
 import { useState, useEffect, useRef } from 'react';
 import { Home, Bed, Bath, Menu, X } from 'lucide-react';
 
+// Alternative method: Import the image (add this at the top of App.tsx)
+// import modelResultsImage from '/src/assets/model-results.png';
+
+// Then use it like this:
+// <img src={modelResultsImage} alt="Model Performance Metrics" />
+
 export default function HouseDashboard() {
   const [bedrooms, setBedrooms] = useState(3);
   const [bathrooms, setBathrooms] = useState(2);
@@ -775,21 +781,97 @@ export default function HouseDashboard() {
             <div className="about-section-block">
               <h3 className="about-subtitle">Dataset Overview</h3>
               <p className="about-text">
-                The dataset used for this project includes individual home transactions, with each row representing a single sale. Key features include home size, location (zip code or geographic coordinates), number of bedrooms and bathrooms, and year built. The dataset contains [insert number] examples. While the dataset provides a strong foundation for predictive modeling, it has some limitations. Certain neighborhoods may be underrepresented, and features such as school quality, neighborhood amenities, or crime rates are not included. Additionally, historical pricing biases may be reflected in the data, which could influence predictions.
+                The dataset used for this project includes individual home transactions, with each row representing a single sale. Key features include home size, location (zip code or geographic coordinates), number of bedrooms and bathrooms, and year built. The dataset contains [insert number] examples. While the dataset provides a strong foundation for predictive modeling, it has some limitations. Certain neighborhoods may be underrepresented, and features such as school quality, neighborhood amenities, or crime rates are not included. Additionally, historical pricing biases may be reflected in the data, which could influence predictions. The data was taken from a kaggle dataset that can be found here: https://www.kaggle.com/datasets/muhammadbinimran/housing-price-prediction-data?resource=download
               </p>
             </div>
 
             <div className="about-section-block">
               <h3 className="about-subtitle">Methodology</h3>
               <p className="about-text">
-                We experimented with both linear regression and Ridge Regression to model home prices. While linear regression provides a straightforward approach, Ridge Regression was ultimately chosen because it mitigates overfitting, particularly in datasets with multicollinearity or highly correlated features. Ridge Regression introduces a regularization term that constrains the model coefficients, producing a more stable and reliable solution. Conceptually, one can imagine the model's error, or loss, as a mountainous terrain in multiple dimensions, where each point represents a different combination of feature weights. Linear regression may produce a long, flat valley of minima—many combinations of weights yielding similar errors. Ridge Regression "folds the edges of this valley," producing a unique absolute minimum, which stabilizes predictions and ensures a balanced weighting of features. We tuned the regularization strength (alpha) to optimize the trade-off between bias and variance.
+                We experimented with multiple regression approaches to model home prices: Linear Regression, Ridge Regression, and Decision Tree Regression. While linear regression provides a straightforward approach, Ridge Regression was ultimately chosen for the interactive model because it mitigates overfitting, particularly in datasets with multicollinearity or highly correlated features. Ridge Regression introduces a regularization term that constrains the model coefficients, producing a more stable and reliable solution. Conceptually, one can imagine the model's error, or loss, as a mountainous terrain in multiple dimensions, where each point represents a different combination of feature weights. Linear regression may produce a long, flat valley of minima—many combinations of weights yielding similar errors. Ridge Regression "folds the edges of this valley," producing a unique absolute minimum, which stabilizes predictions and ensures a balanced weighting of features. We also explored Decision Tree Regression with a depth of 6, which captures non-linear relationships and feature interactions, providing an alternative perspective on the data's predictive patterns. We tuned the regularization strength (alpha) and tree depth to optimize the trade-off between bias and variance.
               </p>
             </div>
 
             <div className="about-section-block">
               <h3 className="about-subtitle">Results and Insights</h3>
               <p className="about-text">
-                Our Ridge Regression model demonstrates that home size and location are strong predictors of price, while regularization helps reduce the impact of outliers and correlated features. Evaluation metrics such as [insert metrics, e.g., RMSE, MAE, R²] indicate that the model reliably predicts prices across a range of neighborhoods. The model provides actionable insights by highlighting areas with rapid price increases, potential overpricing, and inequities in housing access. However, it is important to acknowledge limitations. The model does not account for non-quantitative factors such as school quality or neighborhood amenities, and predictions may be less accurate in highly volatile markets. Historical biases in the data could also influence model outputs.
+                Our analysis compared three different modeling approaches: Linear Regression, Ridge Regression, and Decision Tree Regression. The results demonstrate that home size and location are strong predictors of price across all models. Ridge Regression was selected for the interactive model due to its ability to handle multicollinearity while maintaining interpretability. The Decision Tree model, while slightly less accurate, provides insights into non-linear relationships and feature interactions. Evaluation metrics such as RMSE, MAE, and R² for all three approaches are shown below:
+              </p>
+              
+              {/* Image Container */}
+              <div className="results-image-container" style={{
+                margin: '2rem 0',
+                textAlign: 'center',
+                padding: '1rem',
+                backgroundColor: 'rgba(255, 255, 255, 0.05)',
+                borderRadius: '8px',
+                border: '1px solid rgba(255, 255, 255, 0.1)'
+              }}>
+                <img 
+                  src="/images/download.png" 
+                  alt="Model Performance Metrics - Linear vs Ridge Regression"
+                  style={{
+                    maxWidth: '100%',
+                    height: 'auto',
+                    borderRadius: '6px',
+                    boxShadow: '0 4px 12px rgba(0, 0, 0, 0.3)'
+                  }}
+                />
+                <p style={{
+                  marginTop: '0.5rem',
+                  fontSize: '0.875rem',
+                  color: 'rgba(255, 255, 255, 0.7)',
+                  fontStyle: 'italic'
+                }}>
+                  Model Performance Comparison: Linear Regression vs Ridge Regression
+                </p>
+              </div>
+
+              <div className="metrics-summary" style={{
+                backgroundColor: 'rgba(0, 0, 0, 0.3)',
+                border: '1px solid rgba(59, 130, 246, 0.3)',
+                borderRadius: '8px',
+                padding: '1.5rem',
+                margin: '1.5rem 0',
+                fontFamily: 'monospace'
+              }}>
+                <h4 style={{ color: '#3b82f6', marginBottom: '1rem', textAlign: 'center' }}>
+                  Performance Metrics Comparison
+                </h4>
+                <div style={{ 
+                  display: 'grid', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                  gap: '1rem' 
+                }}>
+                  <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(245, 158, 11, 0.1)', borderRadius: '6px' }}>
+                    <strong style={{ color: '#f59e0b', fontSize: '1.1em' }}>Linear Regression</strong><br />
+                    <div style={{ marginTop: '0.5rem', color: 'rgba(255, 255, 255, 0.9)' }}>
+                      MAE: 39,915.91<br />
+                      RMSE: 49,756.19<br />
+                      R²: 0.568
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(16, 185, 129, 0.1)', borderRadius: '6px' }}>
+                    <strong style={{ color: '#10b981', fontSize: '1.1em' }}>Ridge Regression</strong><br />
+                    <div style={{ marginTop: '0.5rem', color: 'rgba(255, 255, 255, 0.9)' }}>
+                      MAE: 39,915.90<br />
+                      RMSE: 49,756.19<br />
+                      R²: 0.568
+                    </div>
+                  </div>
+                  <div style={{ textAlign: 'center', padding: '1rem', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '6px' }}>
+                    <strong style={{ color: '#8b5cf6', fontSize: '1.1em' }}>Decision Tree (depth: 6)</strong><br />
+                    <div style={{ marginTop: '0.5rem', color: 'rgba(255, 255, 255, 0.9)' }}>
+                      MAE: 40,134.17<br />
+                      RMSE: 50,085.25<br />
+                      R²: 0.562
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <p className="about-text">
+                These metrics indicate that the model reliably predicts prices across a range of neighborhoods. The model provides actionable insights by highlighting areas with rapid price increases, potential overpricing, and inequities in housing access. However, it is important to acknowledge limitations. The model does not account for non-quantitative factors such as school quality or neighborhood amenities, and predictions may be less accurate in highly volatile markets. Historical biases in the data could also influence model outputs.
               </p>
             </div>
 
